@@ -1,11 +1,95 @@
-# Build and Object Folders
-bin/
-obj/
+'new module for nondefault firm using solver
+Sub bsfunction()
+Dim w As Workbook
+Set w = Workbooks("ROC")
+w.Sheets(3).Range("m53") = "t"
+Dim changdu As Integer
+changdu = 89
+For i = 1 To changdu - 1
+w.Sheets(3).Range("m53").Offset(i, o) = 1
+    Next i
+'====working on worksheet============
+Dim st As Worksheet
+Set st = w.Worksheets("summary")
+st.Range("n53") = "d1"
+st.Range("o53") = "d2"
+st.Range("p53") = "sqr error"
+st.Range("q53") = "new Et"
+st.Range("r53") = "new sigmaE"
+'=(LN(H51/L51)+(K51+I51^2/2)*M51)/(I51*M51^0.5)
+ st.Range("N54") = "=(LN(H54/L54)+(K54+I54^2/2)*M54)/(I54*M54^0.5)"
+ Range("N54").Select
+Selection.AutoFill Destination:=Range("N54:N141")
+'=N51-I51*M51^0.5
+st.Range("o54") = "=N54-I54*M54^0.5"
+Range("o54").Select
+Selection.AutoFill Destination:=Range("o54:o141")
+'=(Q51/F51-1)^2+(R51/G51-1)^2
+st.Range("p54") = "=(Q54/F54-1)^2+(R54/G54-1)^2"
+Range("P54").Select
+Selection.AutoFill Destination:=Range("P54:P141")
+'=H51*NORMSDIST(N51)-L51*EXP(-M51*K51)*NORMSDIST(O51)
+st.Range("q54") = "=H54*NORMSDIST(N54)-L54*EXP(-M54*K54)*NORMSDIST(O54)"
+Range("Q54").Select
+Selection.AutoFill Destination:=Range("q54:Q141")
+'=(H51/Q51)*I51*NORMSDIST(N51)
+st.Range("r54") = "=(H54/Q54)*I54*NORMSDIST(N54)"
+Range("R54").Select
+Selection.AutoFill Destination:=Range("R54:R141")
+'==================================================
+'set the initial guess for two variable
+'==================================================
+For i = 1 To changdu - 1
+st.Range("h53").Offset(i, 0) = st.Cells(53 + i, 6) + st.Cells(53 + i, 12)
+st.Range("i53").Offset(i, 0) = st.Cells(53 + i, 6) * st.Cells(53 + i, 7) / st.Cells(53 + i, 8)
+Next i
 
-#User Specific Files
-*.user
-*.suo
+'===================================================
+'Calling solver for solve function
+'===================================================
+Dim j As Integer
+For j = 54 To 141
+SolverReset
+solverOk Setcell:="$P$" & j, maxminval:=3, valueof:="0", bychange:="$F$" & j & ":$G$" & j
+SolverSolve Userfinish = False
+ Next j
 
-#Resource Caches
-_ReSharper.*
-*.sln.cache
+End Sub
+
+
+'clear the sheets
+
+Sub clear1()
+
+Dim w As Workbook
+Set w = Workbooks("roc")
+Dim st As Worksheet
+Set st = w.Worksheets("summary")
+'=================='
+'clean the dataset
+'==================
+Dim changdu As Integer
+changdu = 88
+For i = 1 To changdu
+    Range("m53").Offset(i, 0) = ""
+    Range("n53").Offset(i, 0) = ""
+    Range("o53").Offset(i, 0) = ""
+    Range("p53").Offset(i, 0) = ""
+    Range("q53").Offset(i, 0) = ""
+    Range("r53").Offset(i, 0) = ""
+    Next i
+    
+End Sub
+Sub nss()
+
+
+
+Dim j As Integer
+For j = 54 To 141
+SolverReset
+solverOk Setcell:="$P$" & j, maxminval:=3, valueof:="0", bychange:="$F$" & j & ":$G$" & j
+SolverSolve Userfinish = False
+ Next j
+ 
+End Sub
+
